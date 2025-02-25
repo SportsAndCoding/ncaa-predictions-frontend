@@ -1,23 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import GroupStandings from './GroupStandings';  // ✅ Ensure this file exists
+import WhoPickedWhom from './WhoPickedWhom';    // ✅ Ensure this file exists
 
 function App() {
+  const [page, setPage] = useState('standings');
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>🏀 NCAA Predictions</h1>
+      <nav>
+        <button onClick={() => setPage('standings')}>Group Standings</button>
+        <button onClick={() => setPage('who_picked_whom')}>Who Picked Whom</button>
+      </nav>
+
+      {page === 'standings' ? <GroupStandings /> : <WhoPickedWhom />}
     </div>
   );
 }
