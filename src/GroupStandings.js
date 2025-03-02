@@ -1,48 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import { fetchGroupStandings } from './api/api';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-function GroupStandings() {
+const GroupStandings = () => {
   const [standings, setStandings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const groupId = 5; // Example group ID
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const loadStandings = async () => {
-      const data = await fetchGroupStandings(groupId);
-      if (data) setStandings(data);
-      setLoading(false);
+    const fetchStandings = async () => {
+      try {
+        const response = await axios.get(
+          "https://ncaa-predictions-api.onrender.com/api/group-standings/5"
+        );
+        setStandings(response.data);
+      } catch (err) {
+        setError("Failed to load group standings.");
+      } finally {
+        setLoading(false);
+      }
     };
 
-    loadStandings();
+    fetchStandings();
   }, []);
+
+  if (loading) return <p>Loading standings...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div>
-      <h1>🏆 Group Standings</h1>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <table border="1">
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Points Scored</th>
-              <th>Points Possible</th>
+      <h2>🏆 Group Standings</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Points Scored</th>
+            <th>Points Possible</th>
+          </tr>
+        </thead>
+        <tbody>
+          {standings.map((user) => (
+            <tr key={user.user_id}>
+              <td>{user.username}</td>
+              <td>{user.total_points}</td>
+              <td>{user.total_points_possible}</td>
             </tr>
-          </thead>
-          <tbody>
-            {standings.map((entry, index) => (
-              <tr key={index}>
-                <td>{entry.username}</td>
-                <td>{entry.total_points}</td>
-                <td>{entry.total_points_possible}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-}
+};
 
 export default GroupStandings;
